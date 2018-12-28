@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.henangengyun.gxrl.mapper.ClientMapper">
+
+	<!-- 
+	<resultMap type="model.Client" id="client">
+		<id column="No" property="No"/>
+		<result column="Name" property="Name"/>
+		<result column="Phone" property="Phone"/>
+		<result column="DiscrictName" property="DistrictName"/>
+		<result column="CommunityName" property="CommunityName"/>
+		<result column="BuildingName" property="BuildingName"/>
+		<result column="RoomNo" property="RoomNo"/>
+		<result column="Aera" property="Aera"/>
+		<result column="Price" property="Price"/>
+		<result column="MeterPrice" property="MeterPrice"/>
+		<result column="DiscountRatio" property="DiscountRatio"/>
+		<result column="Account" property="Account"/>
+		<result column="MeterBaseFeeRatio" property="MeterBaseFeeRatio"/>
+	</resultMap>
+ 	 -->
+
+	<select id="getClientByNo" parameterType="String" resultType="Client">
+		select *
+		from clientInfoes where No = #{v}
+	</select>
+
+</mapper>

@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.henangengyun.gxrl.mapper.ChargeDetailMapper">
+	<resultMap type="com.henangengyun.gxrl.po.ChargeDetail" id="ChargeDetailMap">
+		<result column="Price1" property="Price" />
+		<result column="Price2" property="MeterPrice" />
+	</resultMap>
+
+	<select id="getChargeDetailByFeeId" resultMap="ChargeDetailMap" parameterType="long">
+		SELECT
+		Price1,
+		Price2,
+		DiscountRatio,
+		StartTime,
+		EndTime,
+		DayValue,
+		MeterValue,
+		PreFee,
+		ConsumeFee
+		FROM
+		ClientSeasonFeeViews
+		WHERE FeeId=#{FeeId}
+	</select>         
+</mapper>

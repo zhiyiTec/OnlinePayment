@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<link href="https://cdnjs.cloudflare.com/ajax/libs/weui/1.1.2/style/weui.min.css" rel="stylesheet">
+
+<style type="text/css">
+.sty {
+	padding-top: 35%;
+}
+
+.sty1 {
+	text-align: center;
+}
+.sty2{
+	float: right;
+}
+
+</style>
+</head>
+
+<body>
+	<div class="container-fluid">
+		<!-- 左右样式 -->
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="container-fluid">
+					<img alt="洛阳高新热力有限公司" src="1.png"
+						style="max-width: 100%; overflow: hidden;"> <span
+						style="color: graytext; font-size: 100%; font-family: STXingkai;">洛阳高新热力有限公司</span>
+				</div>
+			</div>
+
+		</nav>
+			<div class="btn-group sty " role="group" aria-label="..." >
+  <div class="btn-group " role="group">
+    <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+     点击选择其他用户信息
+      <span class="caret"></span>
+	</button>
+	
+    <ul class="dropdown-menu" id="dropdown-menu">
+     
+    </ul>
+  </div>
+</div>
+		
+
+			
+				
+			
+			
+				<table class="table table-striped">
+					<tr>
+						<td class="  col-md-4" ><h3>用户信息</h3></td>
+						<td class="col-md-8  " ></td>
+					</tr>
+					<tr>
+						<td class="  col-md-4">姓名</td>
+						<td class="col-md-8  " id="name"></td>
+					</tr>
+
+					<tr>
+						<td>编号</td>
+						<td id="no"></td>
+					</tr>
+
+					<tr>
+						<td>应缴总金额</td>
+						<td id="totalOwedFee"></td>
+					</tr>
+				</table>
+			<ul class="list-group " id="ul1">
+			<li style="list-style-type:none;"><h3>账单明细</h3></li>
+		</ul>
+	
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container">
+				<div class="container-fluid">
+					<a href="#"><button type="button" id='btnPay' class="btn btn-primary btn-lg btn-block">确认缴费</button></a>
+				</div>
+			</div>
+
+		</nav>
+	</div>
+	
+	<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="https://res.wx.qq.com/open/js/jweixin-1.0.0.js"></script>
+    <script src="https://res.wx.qq.com/open/libs/weuijs/1.0.0/weui.min.js"></script>
+    <script type="text/javascript">
+    	var m;
+		$(document).ready(function() {
+			 $.ajax({
+				  type: 'get',
+				  url: "http://www.henangengyun.com/wxpay/wx/cno?nno=GX0101500020",
+				  //数据加载成功调用的方法 sucess()
+				  success: function(data){
+				    //这里写数据加载成功后，会执行的代码
+				    var no=data.no;
+			 		 if(no.length==1){
+				    	show(data.no[0]);
+				    }
+				    if(no.length>1){
+				    	$.each(no, function(index, data2){
+				    		$("#dropdown-menu").append("<li><button type='button' id='signalBu"+data2+"' data-m='buttonSignal' data-no="+data2+"    class='btn btn-info  btn-block '>点击查看用户编号为"+data2+"的用户信息</button></li>");
+							
+						});
+						show(no[0]);
+
+
+				    } 
+				  },
+				  error: function(data){
+					    weui.topTips('您还没有登录，请先绑定微信！');
+					  }
+				});  
+			 
+			//显示内容
+		
+		
+			function show(no){
+				
+					var strJson='{"No":"'+no+'"}';
+					var json_data=$.parseJSON(strJson);					
+					
+					
+					$.ajax({
+						url : "/wxservice/server/chargeinfo",
+						data : json_data,
+						type:'post',					
+						success : function(data) {
+							//用于显示chargeRecord
+							$.each(data, function(index, data1) {
+								console.log(data);
+								var ind = index + 1;
+								//显示用户基本信息(固定)
+								$.each(data, function(index, data2) {
+									/* console.log("遍历json数据");
+									console.log(data1.consumeFee); */
+									$("#name").html(data2.name);
+									$("#no").html(data2.no);
+									$("#totalOwedFee").html(data2.totalOwedFee+"元");
+									m=data2.totalOwedFee;
+								});
+							});
+						},
+					 error: function(data){
+						    weui.topTips('数据加载失败！');
+						  }
+					});
+					$.ajax({
+						url : "/wxservice/server/feeinfo",
+						data : json_data,
+						type:'post',
+						beforeSend: function(data){
+							   //这里判断，如果没有加载数据，会显示loading    
+							   if(data.readyState == 0){ 
+							     weui.loading('loading');   
+							   }
+							  },
+						success : function(data) {
+							//用于显示chargeRecord
+							$.each(data, function(index, data1) {
+								console.log(data);
+								var ind = index + 1;
+								//显示用户欠费信息(动态)
+								$("#ul1").append("<li class='list-group-item' style='list-style:none;margin-top:2px;' id='tab'>"+"<table class='table table-striped' id='table'>");
+								$("#table").append("<tr >"+"<td class='  col-md-4 sty1' >"+data1.heatingSeason+" 季度"+"</td>"+"</tr>");
+								$("#table").append("<tr >"+"<td class='  col-md-4'>状态</td>"+"<td class='col-md-8  '>"+data1.state+"</td>"+"</tr>");
+								$("#table").append("<tr >"+"<td class='  col-md-4'>季度</td>"+"<td class='col-md-8  '>"+data1.heatingSeason+"</td>"+"</tr>");
+								$("#table").append("<tr id='q2'>"+"<td class=' col-md-4' >滞纳金</td>"+"<td class='col-md-8' >"+data1.delayFee+'元'+"</td>"+"</tr>");
+								$("#table").append("<tr  id='q5'>"+"<td class='  col-md-4'>季度欠费金额</td>"+"<td class='col-md-8  '>"+data1.seasonOwedFee+"元"+"</td>"+"</tr>");
+								$("#table").append("<tr  id='q4'>"+"<td class='  col-md-4'><span style='color:red;'>总欠费金额</sapn></td>"+"<td class='col-md-8  '>"+"<span style='color:red;'>"+data1.owedFee+"元"+"</span>"+"</td>"+"</tr>");
+								$("#table").append("<tr id='q3'>"+"<td class=' col-md-4'><span style='color:red;'>最后缴费时间</span></td>"+"<td class='col-md-8 '>"+"<span style='color:red;'>"+data1.lateFeeStartTime+"span"+"</td>"+"</tr>");
+
+							});
+						},
+						//数据加载成功后调用的方法  complete()
+						  complete: function(data){
+						    //这里判断，数据加载成功之后，loading 隐藏
+						    if(data.status == 200){
+						     // setTimeOut(function(){
+						        weui.loading('loading').hide();
+						      //},500);
+						    }
+						  },
+						  //数据加载错误后调用的方法 error()
+						  error: function(data){
+						    weui.topTips('数据加载失败！');
+						  }
+					});
+				
+			}
+		});
+	</script>
+	<script>
+	var a=new Array();
+	var temp;
+$(document).ready(function(){
+	
+	//用于给动态产生的按钮添加事件
+	 $("div").delegate("button","click",function(){
+		 $("button").click(function(){
+			 var no=$(this).attr("data-no");
+			 var message=$(this).attr("data-m");
+			 if(message=='buttonSignal'){
+					var strJson='{"No":"'+no+'"}';
+					var json_data=$.parseJSON(strJson);					
+					if(!isInArray(a,no)&&a.length>=1){
+						$("#ul1").html("");
+						a.splice(temp);
+						}
+					if(!isInArray(a,no)){
+						$.ajax({
+							url : "/wxservice/server/chargeinfo",
+							data : json_data,
+							type:'post',					
+							success : function(data) {
+								//用于显示chargeRecord
+								$.each(data, function(index, data1) {
+									console.log(data);
+									var ind = index + 1;
+									//显示用户基本信息(固定)
+									$.each(data, function(index, data2) {
+										/* console.log("遍历json数据");
+										console.log(data1.consumeFee); */
+										$("#name").html(data2.name);
+										$("#no").html(data2.no);
+										$("#totalOwedFee").html(data2.totalOwedFee+"元");
+										m=data2.totalOwedFee;
+									});
+								});
+							},
+						 error: function(data){
+							    weui.topTips('数据加载失败！');
+							  }
+						});
+						$.ajax({
+							url : "/wxservice/server/feeinfo",
+							data : json_data,
+							type:'post',
+							beforeSend: function(data){
+								   //这里判断，如果没有加载数据，会显示loading    
+								   if(data.readyState == 0){ 
+								     weui.loading('loading');   
+								   }
+								  },
+							success : function(data) {
+								//用于显示chargeRecord
+								$.each(data, function(index, data1) {
+									console.log(data);
+									var ind = index + 1;
+									//显示用户欠费信息(动态)
+									$("#ul1").append("<li class='list-group-item' style='list-style:none;margin-top:2px;' id='tab'>"+"<table class='table table-striped' id='table'>");
+									$("#table").append("<tr >"+"<td class='  col-md-4 sty1' >"+data1.heatingSeason+" 季度"+"</td>"+"</tr>");
+									$("#table").append("<tr >"+"<td class='  col-md-4'>状态</td>"+"<td class='col-md-8  '>"+data1.state+"</td>"+"</tr>");
+									$("#table").append("<tr >"+"<td class='  col-md-4'>季度</td>"+"<td class='col-md-8  '>"+data1.heatingSeason+"</td>"+"</tr>");
+									$("#table").append("<tr id='q2'>"+"<td class=' col-md-4' >滞纳金</td>"+"<td class='col-md-8' >"+data1.delayFee+'元'+"</td>"+"</tr>");
+									$("#table").append("<tr  id='q5'>"+"<td class='  col-md-4'>季度欠费金额</td>"+"<td class='col-md-8  '>"+data1.seasonOwedFee+"元"+"</td>"+"</tr>");
+									$("#table").append("<tr  id='q4'>"+"<td class='  col-md-4'><span style='color:red;'>总欠费金额</sapn></td>"+"<td class='col-md-8  '>"+"<span style='color:red;'>"+data1.owedFee+"元"+"</span>"+"</td>"+"</tr>");
+									$("#table").append("<tr id='q3'>"+"<td class=' col-md-4'><span style='color:red;'>最后缴费时间</span></td>"+"<td class='col-md-8 '>"+"<span style='color:red;'>"+data1.lateFeeStartTime+"span"+"</td>"+"</tr>");
+
+								});
+							},
+							//数据加载成功后调用的方法  complete()
+							  complete: function(data){
+							    //这里判断，数据加载成功之后，loading 隐藏
+							    if(data.status == 200){
+							     // setTimeOut(function(){
+							        weui.loading('loading').hide();
+							      //},500);
+							    }
+							  },
+							  //数据加载错误后调用的方法 error()
+							  error: function(data){
+							    weui.topTips('数据加载失败！');
+							  }
+						});
+						temp=no;
+					a.push(no);
+					}
+					
+			 }
+			
+		 });
+	 });
+})
+	
+</script>
+<script>
+	function isInArray(arr,value){
+	    for(var i = 0; i < arr.length; i++){
+	        if(value === arr[i]){
+	            return true;
+	        }
+	    }
+	    return false;
+	}
+	</script>
+	<!-- 缴费功能 -->
+	<script type="text/javascript">
+	function callback(data,status){
+		$("#result").text(JSON.stringify(data));
+		pay(JSON.stringify(data));
+	}	
+	
+	function pay(data){
+		alert(data);
+	   WeixinJSBridge.invoke(
+	      'getBrandWCPayRequest', JSON.parse(data),
+	      function(res){
+	      if(res.err_msg == "get_brand_wcpay_request:ok" ){
+	      // 使用以上方式判断前端返回,微信团队郑重提示：
+	            //res.err_msg将在用户支付成功后返回ok，但并不保证它绝对可靠。
+	            $("#info").text(JSON.stringify(res));
+	      } 
+	      else
+	    	  {
+	    	  $("#info").text(res.err_msg);
+	    	  }
+	   }); 
+	}
+	
+	function onBridgeReady(){
+		alert(m);	
+		
+		$.get('http://www.henangengyun.com/wxpay/pay/order?mm='+m,callback);
+	}
+	
+	function bc(){
+		if (typeof WeixinJSBridge == "undefined"){
+			   if( document.addEventListener ){
+			       document.addEventListener('WeixinJSBridgeReady', onBridgeReady, false);
+			   }else if (document.attachEvent){
+			       document.attachEvent('WeixinJSBridgeReady', onBridgeReady); 
+			       document.attachEvent('onWeixinJSBridgeReady', onBridgeReady);
+			   }
+			}else{
+			   onBridgeReady();
+			}
+	}
+	
+	$("#btnPay").click(bc());
+	</script>
+</body>
+</html>

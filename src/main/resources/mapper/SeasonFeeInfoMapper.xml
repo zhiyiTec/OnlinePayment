@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.henangengyun.gxrl.mapper.SeasonFeeInfoMapper">
+
+	<!-- <select id="getSeasonFeeInfoByNo" resultMap="SeasonFeeInfoMap" parameterType="String"> SELECT HeatingSeason, 
+		CommunityName, BuildingName, UnitName, RoomNo, Aera, Price1, Price2, DiscountRatio, StartTime, EndTime, 
+		DayValue, SeasonOwedFee, MeterValue, PreFee, ConsumeFee, State FROM ClientSeasonFeeViews WHERE No=#{No} 
+		ORDER BY HeatingSeason DESC </select> -->
+	<resultMap type="com.henangengyun.gxrl.po.SeasonFeeInfo" id="SeasonFeeInfoMap">
+		<result column="HeatingSeason" property="HeatingSeason" />
+		<result column="State" property="State" />
+		<result column="LateFeeStartTime" property="LateFeeStartTime" />
+		<result column="SeasonOwedFee" property="SeasonOwedFee" />
+	</resultMap>
+
+	<select id="getSeasonFeeInfoByNo" resultMap="SeasonFeeInfoMap">
+		SELECT
+		Id,
+		HeatingSeason,
+		State,
+		LateFeeStartTime,
+		SeasonOwedFee
+		FROM
+		ClientSeasonFeeViews
+		WHERE No=#{No} AND
+		SeasonOwedFee!=0
+		ORDER BY HeatingSeason DESC
+	</select>
+
+	<!-- <select id="getSeasonFeeByNoAndSeason" resultMap="SeasonFeeInfoMap"> SELECT HeatingSeason, CommunityName, 
+		BuildingName, UnitName, RoomNo, Aera, Price1, Price2, DiscountRatio, StartTime, EndTime, DayValue, SeasonOwedFee, 
+		MeterValue, PreFee, ConsumeFee, State FROM ClientSeasonFeeViews WHERE No=#{No} AND HeatingSeason = #{season} 
+		ORDER BY HeatingSeason DESC </select> -->
+
+
+</mapper>

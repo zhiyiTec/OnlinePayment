@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.henangengyun.gxrl.mapper.ChargeConfirmMapper">
+
+	<insert id="insertChargeRecord">
+		insert into ChargeRecords
+		(Season
+		,ClientId
+		,ClientNo
+		,ClientType
+		,PayedFee
+		,DelayFee
+		,PayedTime
+		,PayedMethod
+		,ChargerId
+		,Note
+		,SeasonFeeId
+		,StreamNo
+		,Status
+		,CheckTime
+		,Reason
+		,ProcessFlag
+		,ProcessTime
+		,ProcesserId
+		,MainNo
+		,DeleteFlag)
+		VALUES(#{Season}
+		,#{ClientId}
+		,#{ClientNo}
+		,2
+		,#{PayedFee}
+		,#{DelayFee}
+		,#{PayedTime}
+		,3
+		,-1
+		,'微信支付收费'
+		,#{SeasonFeeId}
+		,#{StreamNo}
+		,1
+		,NULL
+		,0
+		,NULL
+		,NULL
+		,NULL
+		,NULL
+		,0)
+	</insert>
+</mapper>

@@ -1,0 +1,141 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+.sty {
+	padding-top: 15%;
+}
+</style>
+
+<!-- 新 Bootstrap 核心 CSS 文件 -->
+
+<link rel="stylesheet"
+	href="http://cdn.bootcss.com/bootstrap/3.3.0/css/bootstrap.min.css">
+<!-- jQuery文件。务必在bootstrap.min.js 之前引入 -->
+<script src="http://cdn.bootcss.com/jquery/1.11.1/jquery.min.js"></script>
+<!-- 最新的 Bootstrap 核心 JavaScript 文件 -->
+<script src="http://cdn.bootcss.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+</head>
+<body>
+	<div class="container-fluid">
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="container-fluid">
+					<img alt="洛阳高新热力有限公司" src="1.png"
+						style="max-width: 100%; overflow: hidden; width: 10%; padding-top: 3px;">
+					<span
+						style="color: graytext; font-size: 100%; font-family: STXingkai;">洛阳高新热力有限公司</span>
+				</div>
+			</div>
+		</nav>
+		<ul class="list-group sty " id="ul">
+
+			<li class="list-group-item">
+				<h3>缴费记录</h3>
+			</li>
+			<li class="list-group-item">
+				<table class="table table-striped">
+					<tr>
+						<td class="  col-md-4">面积</td>
+						<td class="col-md-8  " id="aera"></td>
+					</tr>
+					<tr>
+						<td class="  col-md-4">姓名</td>
+						<td class="col-md-8  " id="name"></td>
+					</tr>
+
+					<tr>
+						<td>编号</td>
+						<td id="no"></td>
+					</tr>
+				
+					<tr>
+						<td>应缴总金额</td>
+						<td id="totalOwedFee"></td>
+					</tr>
+					
+				</table>
+			</li>
+			<li class="list-group-item">
+				<h3>费用明细</h3>
+			</li>
+		</ul>
+	</div>
+	<!-- 用于监听按钮事件 -->
+		<script>
+		$("input").on("click",function(event){
+            var value = $(event.target).attr("id");
+            alert("我的value属性值为："+value);
+        });
+		var btns = $('input');
+		var count=1;
+		btns[0].onclick = function() {
+			
+			console.log(count);
+			count=count+1;
+			 $("#q2,#q3,#q4,#q5,#q6,#q8,#q9,#q10,#q11,#q12").toggle(1000);
+			 if(count%2==0){
+				 $("input").attr("value","展开");
+			 }else{
+				 $("input").attr("value","收起");
+			 }
+			 console.log($(this).attr("id"));
+		}
+		</script>
+	<script type="text/javascript">
+		$(document).ready(function() {
+			$.ajax({
+				url : "/wxservice/server/chargeinfo",
+				data : "No=GX0100500001",
+				success : function(data) {
+					//用于显示seasonFeeInfos
+					console.log(data);
+					
+					$.each(data.seasonFees, function(index, data1) {
+						/* console.log("遍历json数据");
+						console.log(data1.consumeFee); */
+						
+						console.log(data1.consumeFee);
+						var ind=index+1;
+						$("#ul").append("<li class='list-group-item' style='list-style:none;margin-top:2px;'id='table'>"+"<table class='table table-striped'");
+						$("#table").append("<tr >"+"<td class='  col-md-4'>"+ind+"</td>"+"</tr>");
+						$("#table").append("<tr >"+"<td class='  col-md-4'>季度</td>"+"<td class='col-md-8  '>"+data1.heatingSeason+"</td>"+"</tr>");
+						$("#table").append("<tr >"+"<td class='  col-md-4'>费用状态</td>"+"<td class='col-md-8  '>"+data1.state+"</td>"+"</tr>");
+						$("#table").append("<tr >"+"<td class='  col-md-4'>缴费期限</td>"+"<td class='col-md-8  '>"+data1.lateFeeStartTime+"</td>"+"</tr>");
+						$("#table").append("<tr>"+"<td class=' col-md-4'>季度总欠费</td>"+"<td class='col-md-8  '>"+data1.owedFee+"</td>"+"</tr>");
+						$("#table").append("<tr >"+"<td class='col-md-4'>欠费金额</td>"+"<td class='col-md-8  '>"+data1.seasonOwedFee+"</td>"+"</tr>");
+	
+						$("#table").append("<tr >"+"<td>"+"<input type='button' class='btn btn-primary btn-lg btn-block' id="+data1.Feeid+" value='展开' />"+"</td>"+"</tr>");
+						
+						$("#ul").append("</table>"+"</li>");
+						
+					});
+					//用于显示chargeInfos
+					$.each(data.chargeInfos, function(index, data2) {
+						/* console.log("遍历json数据");
+						console.log(data1.consumeFee); */
+						$("#aera").html(data2.aera);
+						$("#name").html(data2.name);
+						$("#no").html(data2.no);
+						$("#totalOwedFee").html(data2.totalOwedFee);
+					});
+				}
+			
+			});
+			
+		});
+		
+	</script>
+
+</body>
+
+</html>

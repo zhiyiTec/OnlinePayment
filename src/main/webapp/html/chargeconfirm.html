@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8" name="viewport"
+	content="width=device-width, initial-scale=1">
+<title></title>
+<link rel="stylesheet"
+	href="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/css/bootstrap.min.css">
+<script src="https://cdn.staticfile.org/jquery/2.1.1/jquery.min.js"></script>
+<script
+	src="https://cdn.staticfile.org/twitter-bootstrap/3.3.7/js/bootstrap.min.js"></script>
+
+<style type="text/css">
+.sty {
+	padding-top: 35%;
+}
+
+.sty1 {
+	text-align: center;
+}
+</style>
+</head>
+
+<body>
+	<div class="container">
+		<!-- 左右样式 -->
+		<nav class="navbar navbar-default navbar-fixed-top">
+			<div class="container">
+				<div class="container-fluid">
+					<img alt="洛阳高新热力有限公司" src="1.png"
+						style="max-width: 100%; overflow: hidden;"> <span
+						style="color: graytext; font-size: 100%; font-family: STXingkai;">洛阳高新热力有限公司</span>
+				</div>
+			</div>
+
+		</nav>
+
+		<ul class="list-group sty " id="ul">
+
+			<li class="list-group-item">
+				<h3>用户信息</h3>
+			</li>
+			<li class="list-group-item">
+				<table class="table table-striped">
+
+					<tr>
+						<td class="  col-md-4">姓名</td>
+						<td class="col-md-8  " id="name"></td>
+					</tr>
+
+					<tr>
+						<td>编号</td>
+						<td id="no"></td>
+					</tr>
+
+					<tr>
+						<td>应缴总金额</td>
+						<td id="totalOwedFee"></td>
+					</tr>
+		
+				</table>
+			</li>
+			<li style="list-style-type:none;"><h3>账单明细</h3></li>
+		</ul>
+		<nav class="navbar navbar-default navbar-fixed-bottom">
+			<div class="container">
+				<div class="container-fluid">
+					<a href="#"><button type="button" class="btn btn-primary btn-lg btn-block">确认缴费</button></a>
+				</div>
+			</div>
+
+		</nav>
+	</div>
+	<script type="text/javascript">
+		$(document).ready(function() {
+
+			$.ajax({
+				url : "/wxservice/server/chargeinfo",
+				data : "No=GX0100500051",
+				success : function(data) {
+					//用于显示chargeRecord
+					var no=data.no;
+					
+					console.log("no的数量："+no);
+					$.each(data, function(index, data1) {
+						console.log(data);
+						var ind = index + 1;
+						//显示用户基本信息(固定)
+						$.each(data, function(index, data2) {
+							/* console.log("遍历json数据");
+							console.log(data1.consumeFee); */
+							$("#name").html(data2.name);
+							$("#no").html(data2.no);
+							$("#totalOwedFee").html(data2.totalOwedFee);
+						});
+					});
+				}
+			});
+			$.ajax({
+				url : "/wxservice/server/feeinfo",
+				data : "No=GX0100500051",
+				success : function(data) {
+					//用于显示chargeRecord
+					$.each(data, function(index, data1) {
+						console.log(data);
+						var ind = index + 1;
+						//显示用户欠费信息(动态)
+						$("#ul").append("<li class='list-group-item' style='list-style:none;margin-top:2px;' id='tab'>"+"<table class='table table-striped' id='table'>");
+						$("#table").append("<tr >"+"<td class='  col-md-4 sty1' >"+data1.heatingSeason+"</td>"+"</tr>");
+						$("#table").append("<tr >"+"<td class='  col-md-4'>状态</td>"+"<td class='col-md-8  '>"+data1.state+"</td>"+"</tr>");
+						$("#table").append("<tr >"+"<td class='  col-md-4'>季度</td>"+"<td class='col-md-8  '>"+data1.heatingSeason+"</td>"+"</tr>");
+						$("#table").append("<tr id='q2'>"+"<td class=' col-md-4' >滞纳金</td>"+"<td class='col-md-8' >"+data1.delayFee+"</td>"+"</tr>");
+						$("#table").append("<tr  id='q5'>"+"<td class='  col-md-4'>季度欠费金额</td>"+"<td class='col-md-8  '>"+data1.seasonOwedFee+"</td>"+"</tr>");
+						$("#table").append("<tr  id='q4'>"+"<td class='  col-md-4'>总欠费金额</td>"+"<td class='col-md-8  '>"+data1.owedFee+"</td>"+"</tr>");
+						$("#table").append("<tr id='q3'>"+"<td class=' col-md-4'>最后缴费时间</td>"+"<td class='col-md-8 '>"+data1.lateFeeStartTime+"</td>"+"</tr>");
+
+					});
+				}
+			});
+		});
+	</script>
+</body>
+</html>

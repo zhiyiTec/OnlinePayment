@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "http://ibatis.apache.org/dtd/ibatis-3-mapper.dtd" "mybatis-3-mapper.dtd" >
+<mapper namespace="com.henangengyun.gxrl.mapper.ClientMapper">
+	<select id="getClientByNo" parameterType="String" resultType="Client">
+		select No,
+		Name,
+		Phone,
+		DistrictName,
+		CommunityName,
+		BuildingName,
+		UnitName,
+		RoomNo,
+		Aera,
+		Price,
+		MeterPrice,
+		DiscountRatio,
+		Account,
+		MeterBaseFeeRatio
+		from clientInfoes where
+		No = #{No}
+	</select>
+
+</mapper>

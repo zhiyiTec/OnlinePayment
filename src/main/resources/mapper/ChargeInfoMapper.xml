@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.henangengyun.gxrl.mapper.ChargeInfoMapper">
+	<resultMap type="com.henangengyun.gxrl.po.ChargeInfo" id="ChargeInfoMap">
+		<id column="No" property="No"></id>
+		<result column="Name" property="Name" />
+		<result column="Aera" property="Aera" />
+	</resultMap>
+
+	<select id="getChargeInfoByNo" resultMap="ChargeInfoMap" parameterType="String">
+		SELECT
+		No,
+		Name
+		FROM
+		ClientSeasonFeeViews
+		GROUP BY No,Name
+		HAVING
+		No=#{No}
+	</select>
+</mapper>

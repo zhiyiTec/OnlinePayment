@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+ PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.henangengyun.gxrl.mapper.ChargeRecordMapper">
+<resultMap type="com.henangengyun.gxrl.po.ChargeRecord" id="ChargeRecordMap">
+		<id column="No" property="No"></id>
+		<result column="Name" property="Name" />
+		<result column="PayedFee" property="PayedFee" />
+		<result column="DelayFee" property="DelayFee" />
+		<result column="Season" property="Season" />
+		<result column="PayedTime" property="PayedTime" />
+		<result column="PayedMethod" property="PayedMethod" />
+		<result column="StreamNo" property="StreamNo" />
+	</resultMap>
+
+
+	<select id="getChargeRecord" resultMap="ChargeRecordMap">
+		select
+		No,
+		Name,
+		PayedFee,
+		Season,
+		DelayFee,
+		PayedTime,
+		PayedMethod,
+		StreamNo
+		from
+		ClientChargeRecordsView
+		where
+		No=#{No} and PayedTime between #{start} and #{end}
+		ORDER BY Season DESC
+	</select>
+
+
+
+</mapper>
